@@ -20,7 +20,7 @@
 		email_rule=/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
 		number_rule=/^\d+$/;
 	var validate=function(id,type,callback){
-		let element=document.getElementById(id),
+		var element=document.getElementById(id),
 			_value=element.value,
 			callbackfn = callback || defaults.callback;
 		switch(type.type){
