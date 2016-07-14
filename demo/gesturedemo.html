@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>H5单页面手势滑屏切换</title>
+    <meta name="viewport" charset="utf-8" content="width=device-width,
+    initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=1.0">
+    <link rel="stylesheet" href="dist/app.css">
+    <style>
+		* { margin: 0; padding: 0; }
+		html, body { width: 100%; height: 100%; overflow: hidden; font-color:#fff;}
+		.container { width: 100%; height: 100%; position: absolute; left: 0; top: 0%; }
+		.container .page { height: 100%; position: relative; color:#fff;text-align:center; }
+		.container .page h1{padding-top:120px; line-height:50px; display:block}
+		.container .page0 { background-color: blue;}
+		.container .page1 { background-color:#93F;}
+		h1{width:200px}
+		.pageview{
+			width: 100%;
+			height: 100%;
+			float: left;
+		}
+	</style>
+</head>
+<body onmousewheel="return false;">
+<div class="container">
+  <div id="viewport" class="page viewport cur">
+    <div class="pageview" style="background-color: #3b76c0" >
+        <h1>页面-1</h1>
+    </div>
+    <div class="pageview" style="background-color: #58c03b;">
+        <h1>页面-2</h1>
+    </div>
+    <div class="pageview" style="background-color: #c03b25;">
+        <h1>页面-3</h1>
+    </div>
+    <div class="pageview" style="background-color: #e0a718;">
+        <h1>页面-4</h1>
+    </div>
+    <div class="pageview" style="background-color: #c03eac;">
+        <h1>页面-5</h1>
+    </div>
+  </div>
+  <div class="page page0">
+	<h1>你好，我是0号屏幕，第一屏,鼠标单击向下拖动</h1>
+  </div>
+  <div class="page page1">
+	<h1>你好，我是1号屏幕，鼠标单击向下/向上拖动</h1>
+  </div>
+</div>
+<script src="../js/jquery-1.11.1.min.js"></script>
+<script src="../js/jquery.touchSwipe.min.js"></script>
+<script>
+var GuesTure = 
+{
+	offset : 0 ,
+	current : 0 ,
+	num : 0 ,
+	run : function()
+	{
+		GuesTure.num = $(".container>div").length;
+		$(".container").swipe({
+			swipe:function(event, direction, distance, duration, fingerCount) {
+				console.log(direction);
+				switch(direction)
+				{
+					case 'up':
+						++GuesTure.offset;
+						if(GuesTure.offset > GuesTure.num - 1){
+							return;
+						}
+						if(GuesTure.offset < 0){
+							GuesTure.offset = 0;
+						}
+						$(".container").animate({"top":GuesTure.offset * -100 + "%"},200);
+						$(".page").eq(GuesTure.offset).addClass("cur").siblings().removeClass("cur");
+					break;
+					case 'down':
+					    --GuesTure.offset;
+						if(GuesTure.offset > GuesTure.num - 1){
+							return;
+						}
+						if(GuesTure.offset < 0){
+							GuesTure.offset = 0;
+						}
+						$(".container").animate({"top":GuesTure.offset * -100 + "%"},200);
+						$(".page").eq(GuesTure.offset).addClass("cur").siblings().removeClass("cur");
+					break;
+					case 'left':
+						var offsetDom = $(".container>div").eq(GuesTure.offset),
+							num = offsetDom.children('div').length;
+						++GuesTure.current;
+						if(GuesTure.current > num - 1){
+							return;
+						}
+						if(GuesTure.current < 0){
+							GuesTure.current = 0;
+						}
+						offsetDom.children('div').not(GuesTure.current).hide();
+						offsetDom.children('div').eq(GuesTure.current).show();
+					break;
+					case 'right':
+						var offsetDom = $(".container>div").eq(GuesTure.offset),
+							num = offsetDom.children('div').length;
+						--GuesTure.current;
+						if(GuesTure.current > num - 1){
+							return;
+						}
+						if(GuesTure.current < 0){
+							GuesTure.current = 0;
+						}
+						offsetDom.children('div').not(GuesTure.current).hide();
+						offsetDom.children('div').eq(GuesTure.current).show();						
+					break;
+				}
+			}
+		});
+	}
+};
+GuesTure.run();
+</script>
+</body>
+</html>

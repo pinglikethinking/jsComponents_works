@@ -1,0 +1,578 @@
+/*
+接口
+using QPark.Charging.Coupon.Contract;
+using QPark.SystemManage.Web.Models.Config;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using System.Web.Script.Serialization;
+
+namespace QPark.SystemManage.Web.Controllers
+{
+    public class SlideController : Controller
+    {
+        private List<RowModel> listConfig { get; set; }
+        public SlideController()
+        {
+            try
+            {
+
+                if (listConfig == null)
+                {
+                    string fileName = System.Web.Hosting.HostingEnvironment.MapPath(@"\Config\HtmlJson.json");
+                    JavaScriptSerializer js = new JavaScriptSerializer();
+                    string html = System.IO.File.ReadAllText(fileName);
+                    listConfig = js.Deserialize<List<RowModel>>(html);
+                }
+            }
+            catch (Exception ex)
+            {
+                listConfig = null;
+            }
+        }
+
+        // GET: Coupon/Slide
+        public ActionResult Index()
+        {
+            var couponService = CouponServiceHelper.Helper.CouponService;
+            var datas = couponService.GetCouponOrderDataList();
+            return View();
+        }
+
+
+
+
+        /// <summary>
+        /// 获取在中间的页面
+        /// </summary>
+        /// <param name="Number"></param>
+        /// <returns></returns>
+        public string GetNextHtml(int Number)
+        {
+            if (listConfig == null)
+                return "最后一页";
+            var modelList = listConfig.Where(m => m.Next == Number).FirstOrDefault();
+
+            if (modelList != null)
+            {
+                string fileName = modelList.Url;//文件路径
+                fileName = Request.MapPath(fileName);
+                if (!System.IO.File.Exists(fileName))
+                {
+                    return "请投诉开发人员！最好打一顿！";
+                }
+                string html = System.IO.File.ReadAllText(fileName);
+                return html;
+            }
+            return "最后一页";
+        }
+
+        /// <summary>
+        /// 获取左侧html页面
+        /// </summary>
+        public string GetLeftHtml(int Number, int Next)
+        {
+            return GetAssignHtml(Number, Next, Location.Left);
+        }
+
+        /// <summary>
+        /// 获取右侧的html页面
+        /// </summary>
+        /// <param name="Number"></param>
+        /// <returns></returns>
+        public string GetRightHtml(int Number, int Next)
+        {
+            return GetAssignHtml(Number, Next, Location.Rlght);
+        }
+
+
+        /// <summary>
+        /// 获取指定的页面
+        /// </summary>
+        /// <param name="Number"></param>
+        /// <param name="location"></param>
+        /// <returns></returns>
+        public string GetAssignHtml(int Number, int Next, Location location)
+        {
+            if (listConfig == null)
+                return "最后一页";
+
+            var modelList = listConfig.Where(m => m.Next == Next).FirstOrDefault();
+
+
+            if (modelList != null)
+            {
+                var model = modelList.AlistOf.Where(m => m.Number == Number).Where(m => m.location == location.ToString()).FirstOrDefault();
+                if (model != null)
+                {
+                    string fileName = model.Url;//文件路径
+                    fileName = Request.MapPath(fileName);
+                    if (!System.IO.File.Exists(fileName))
+                    {
+                        return "请投诉开发人员，最好打一顿！";
+                    }
+                    string html = System.IO.File.ReadAllText(fileName);
+                    return html;
+                }
+                return "最后一页";
+            }
+            return "最后一页";
+        }
+
+    }
+}
+ */
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>h5多页面滑屏切换</title>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <style>
+            b {
+                font-size: 14px;
+                color: #333;
+                font-weight: bold;
+            }
+
+            #btnleft, #btnright, #btnnext, #btntop {
+                width: 13px;
+                height: 63px;
+                line-height: 63px;
+                text-align: center;
+                border-radius: 8px;
+                cursor: pointer;
+                background-color: #666;
+                opacity: 0.7;
+                z-index: 1000;
+            }
+
+            #btnnext, #btntop {
+                width: 63px;
+                height: 13px;
+                line-height: 13px;
+            }
+
+                #btnleft:hover, #btnright:hover, #btnnext:hover, #btntop:hover {
+                    background-color: #FFEF10;
+                    opacity: 1;
+                }
+
+            #loading {
+                background-color: #efc94c;
+                height: 30%;
+                width: 30%;
+                position: fixed;
+                z-index: 1;
+                top: 35%;
+                left: 35%;
+            }
+
+            #loading-center {
+                width: 100%;
+                height: 100%;
+                position: relative;
+            }
+
+            #loading-center-absolute {
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                height: 50px;
+                width: 150px;
+                margin-top: -25px;
+                margin-left: -75px;
+            }
+
+            .object {
+                width: 8px;
+                height: 50px;
+                margin-right: 5px;
+                background-color: #FFF;
+                -webkit-animation: animate 1s infinite;
+                animation: animate 1s infinite;
+                float: left;
+            }
+
+                .object:last-child {
+                    margin-right: 0px;
+                }
+
+                .object:nth-child(10) {
+                    -webkit-animation-delay: 0.9s;
+                    animation-delay: 0.9s;
+                }
+
+                .object:nth-child(9) {
+                    -webkit-animation-delay: 0.8s;
+                    animation-delay: 0.8s;
+                }
+
+                .object:nth-child(8) {
+                    -webkit-animation-delay: 0.7s;
+                    animation-delay: 0.7s;
+                }
+
+                .object:nth-child(7) {
+                    -webkit-animation-delay: 0.6s;
+                    animation-delay: 0.6s;
+                }
+
+                .object:nth-child(6) {
+                    -webkit-animation-delay: 0.5s;
+                    animation-delay: 0.5s;
+                }
+
+                .object:nth-child(5) {
+                    -webkit-animation-delay: 0.4s;
+                    animation-delay: 0.4s;
+                }
+
+                .object:nth-child(4) {
+                    -webkit-animation-delay: 0.3s;
+                    animation-delay: 0.3s;
+                }
+
+                .object:nth-child(3) {
+                    -webkit-animation-delay: 0.2s;
+                    animation-delay: 0.2s;
+                }
+
+                .object:nth-child(2) {
+                    -webkit-animation-delay: 0.1s;
+                    animation-delay: 0.1s;
+                }
+
+
+
+            @@-webkit-keyframes animate {
+
+                50% {
+                    -ms-transform: translateX(-25px) scaleY(0.5);
+                    -webkit-transform: translateX(-25px) scaleY(0.5);
+                    transform: translateX(-25px) scaleY(0.5);
+                }
+            }
+
+            @@keyframes animate {
+                50% {
+                    -ms-transform: translateX(-25px) scaleY(0.5);
+                    -webkit-transform: translateX(-25px) scaleY(0.5);
+                    transform: translateX(-25px) scaleY(0.5);
+                }
+            }
+    </style>
+</head>
+<body>
+    <div class="nav navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand">
+                    QPark
+                </a>
+                <a class="navbar-toggle" data-toggle="collapse" href="#my-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+            </div>
+            <div class="navbar-collapse collapse" id="my-collapse">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a data-toggle="dropdown" href="#">系统管理 <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">用户管理</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#">角色管理</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a data-toggle="dropdown" href="#">停车券管理 <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">停车券产品</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#">停车券活动</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#">停车券计划</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#">停车券订单</a></li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a data-toggle="dropdown" href="#">admin<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">修改密码</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#">退出系统</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="vessel" class="ping_container">
+        <span class="spbtn" id="btntop" style="position: fixed; top: 8%; left: 45%; "><b>▲</b></span>
+        <span class="spbtn" id="btnnext" style="position: fixed; top: 96%; left: 45%;"><b>▼</b></span>
+        <span class="spbtn" id="btnright" style="position: fixed; top: 49%; left: 1%; "><b>◀</b></span>
+        <span class="spbtn" id="btnleft" style="position: fixed; top: 49%; left: 98%;"><b>▶</b></span>
+    </div>
+    <div id="loading">
+        <div id="loading-center">
+            <div id="loading-center-absolute">
+                <div class="object"></div>
+                <div class="object"></div>
+                <div class="object"></div>
+                <div class="object"></div>
+                <div class="object"></div>
+                <div class="object"></div>
+                <div class="object"></div>
+                <div class="object"></div>
+                <div class="object"></div>
+                <div class="object"></div>
+            </div>
+        </div>
+    </div>
+    <script src="~/Scripts/jquery-1.11.1.min.js"></script>
+    <script src="~/Scripts/jquery.touchSwipe.min.js"></script>
+    <script>
+/****
+**
+*************手机端*******************
+**
+****/
+    var GuesTure =
+    {
+        left : 0,
+        right : 0,
+        offset : 1,
+        leftSlide: function () {
+            if (GuesTure.right == 0) {
+                ++GuesTure.left;
+                $.post("/Slide/GetLeftHtml", { "inRowOrder": GuesTure.left, "Row": GuesTure.offset }, function (result) {
+                    if (result == "最后一页") {
+                        --GuesTure.left;
+                        alert("最后一个页面");
+                    } else {
+                        $('#vessel').children("div").eq(0).html(result);
+                    }
+                });
+            } else {
+                --GuesTure.right;
+                if (GuesTure.right === 0 && GuesTure.left === 0) {
+                    GuesTure.init();
+                } else {
+                    $.post("/Slide/GetRightHtml", { "inRowOrder": GuesTure.right, "Row": GuesTure.offset }, function (result) {
+                        if (result == "最后一页") {
+                            GuesTure.right = 0;
+                            alert("最后一个页面");
+                        } else {
+                            $('#vessel').children("div").eq(0).html(result);
+                        }
+                    });
+                }           
+            }
+        },
+        rightSlide: function () {
+            if (GuesTure.left == 0) {
+                ++GuesTure.right;
+                $.post("/Slide/GetRightHtml", { "inRowOrder": GuesTure.right, "Row": GuesTure.offset }, function (result) {
+                    if (result == "最后一页") {
+                        --GuesTure.right;
+                        alert("最后一页");
+                    } else {
+                        $('#vessel').children("div").eq(0).html(result);
+                    }
+                });
+            } else {
+                --GuesTure.left;
+                if (GuesTure.right === 0 && GuesTure.left === 0) {
+                    GuesTure.init();
+                } else {
+                    $.post("/Slide/GetLeftHtml", { "inRowOrder": GuesTure.left, "Row": GuesTure.offset }, function (result) {
+                        if (result == "最后一页") {
+                            GuesTure.left = 0;
+                            alert("最后一页");
+                        } else {
+                            $('#vessel').children("div").eq(0).html(result);
+                        }
+                    });
+                }               
+            }
+        },
+        run: function () {
+            GuesTure.init();
+            $("#vessel").swipe({
+                swipe: function (event, direction, distance, duration, fingerCount) {
+                    switch (direction) {
+                        case 'up':
+                            $("#loading").show();
+                            ++GuesTure.offset;
+                            $.post("/Slide/GetNextHtml", { "Row": GuesTure.offset }, function (result) {
+                                $("#loading").hide();
+                                if (result == "最后一页") {
+                                    $("#btnnext").hide();
+                                    --GuesTure.offset;
+                                    alert("最后一个页面");
+                                } else {
+                                    $('#vessel').children("div").remove();
+                                    $('#vessel').append(result);
+                                }
+                                if (GuesTure.offset == 1) {
+                                    $("#btntop").hide();
+                                } else {
+                                    $("#btntop").show();
+                                }
+                            });
+                        break;
+                        case 'down':
+                            $("#loading").show();
+                            --GuesTure.offset;                          
+                            $.post("/Slide/GetNextHtml", { "Row": GuesTure.offset }, function (result) {
+                                $("#loading").hide();
+                                if (result == "最后一页") {
+                                    GuesTure.offset = 1;
+                                    $("#btnnext").hide();
+                                    alert("第一个页面");
+                                } else {
+                                    $('#vessel').children("div").remove();
+                                    $('#vessel').append(result);
+                                }
+                                if (GuesTure.offset == 1) {
+                                    $("#btntop").hide();
+                                } else {
+                                    $("#btntop").show();
+                                }
+                            });
+                        break;
+                        case 'left':
+                            $("#loading").show();
+                            GuesTure.leftSlide();
+                            $("#loading").hide();
+                            break;
+                        case 'right':
+                            $("#loading").show();
+                            GuesTure.rightSlide();
+                            $("#loading").hide();
+                        break;
+                    }
+                }
+            });
+        },
+        init: function()
+        {
+            //第一次加载
+            $("#loading").show();
+            $.post("/Slide/GetNextHtml", { "Row": GuesTure.offset}, function (result) {
+                $("#loading").hide();
+                if (result == "最后一页") {
+                    alert("您没有权限查看其他页面，请联系管理员！");
+                } else {
+                    $('#vessel').children("div").remove();
+                    $('#vessel').append(result);
+                    $("#btntop").hide();
+                    $("#btnnext").show();
+                }
+            });
+        }
+    }
+/****
+ **
+ *************PC端*******************
+ **
+ ****/
+        //按钮获取下一页
+    $("#btnnext").click(function () {
+        $("#loading").show();
+        ++GuesTure.offset;
+        $.post("/Slide/GetNextHtml", { "Row": GuesTure.offset }, function (result) {
+            $("#loading").hide();
+            if (result == "最后一页") {
+                $("#btnnext").hide();
+                --GuesTure.offset;
+                alert("最后一个页面");
+            } else {
+                $('#vessel').children("div").remove();
+                $('#vessel').append(result);
+            }
+            if (GuesTure.offset == 1) {
+                $("#btntop").hide();
+            } else {
+                $("#btntop").show();
+            }
+        });
+    });
+        //按钮获取上一页
+    $("#btntop").click(function () {
+        --GuesTure.offset;
+        $.post("/Slide/GetNextHtml", { "Row": GuesTure.offset }, function (result) {
+            $("#loading").hide();
+            if (result == "最后一页") {
+                GuesTure.offset = 1;
+                $("#btnnext").hide();
+                alert("第一个页面");
+            } else {
+                $('#vessel').children("div").remove();
+                $('#vessel').append(result);
+            }
+            if (GuesTure.offset == 1) {
+                $("#btntop").hide();
+            } else {
+                $("#btntop").show();
+            }
+        });
+    });
+    //按钮右
+    $("#btnright").click(function () {
+        $("#loading").show();
+        GuesTure.rightSlide();
+        $("#loading").hide();
+
+    });
+
+    //按钮左
+    $("#btnleft").click(function () {
+        $("#loading").show();
+        GuesTure.leftSlide();
+        $("#loading").hide();
+    });
+   //is pc or not
+	function IsPC() {
+	    var userAgentInfo = navigator.userAgent;
+	    console.log(userAgentInfo);
+	    var Agents = ["Android", "iPhone",
+                    "SymbianOS", "Windows Phone",
+                    "iPad", "iPod"];
+	    var flag = true;
+	    for (var v = 0; v < Agents.length; v++) {
+	        if (userAgentInfo.indexOf(Agents[v]) > 0) {
+	            flag = false;
+	            break;
+	        }
+	    }
+	    return flag;
+	}
+   //ping!!!
+        (function decidePhoneOrPC() {
+            var width = $(window).width();
+            if (IsPC) {
+                //pc
+                GuesTure.init();
+                return 1;
+            } else {
+                //ipad phone
+                $(".spbtn").hide();
+                GuesTure.run();
+            }
+	})();
+    </script>
+</body>
+</html>

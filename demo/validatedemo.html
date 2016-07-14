@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>demo</title>
+</head>
+<body>
+	<h2>
+		验证输入的是否为数字：
+		<input type="text" name="number" id="demo" onblur="validateNumber()">
+		<label id="erroInfo"></label>
+	</h2>
+	<hr>
+	<h2>
+		验证输入是否大于10：
+		<input type="text" name="number" id="demoo" onblur="validateMin()">
+		<label id="erroInfo1"></label>
+	</h2>
+	<script type="text/javascript" src="../js/validate.js"></script>
+	<script type="text/javascript">
+	function _callback(erroField,erroinfo){
+		var _html=document.getElementById(erroField);
+    	_html.innerText=erroinfo;
+	}
+	function notvisible(infoField,erroField){
+		var _input=document.getElementById(infoField);
+		_input.addEventListener('click',function(){
+			var _html=document.getElementById(erroField);
+    		_html.innerHTML='';
+		});
+	}
+	function validateNumber(){
+		var validator=new validate('demo',{type:'number'},function(){return _callback("erroInfo",'请输入数字...姐！');});
+		notvisible('demo','erroInfo');
+	}
+	function validateMin(){
+		var isnumber=new validate('demoo',{type:'number'});
+		var validator=new validate('demoo',{type:'min_length',val:10});
+	}
+	</script>
+</body>
+</html>
