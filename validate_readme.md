@@ -59,6 +59,6 @@ function validateMin(){
 * 回调函数callback参数ID必须以双引号括起"id"，否则无效
 * 默认显示错误提示是弹出框的形式，建议按照我的上面
 * 默认显示错误提示是弹出框的形式，建议按照我的上面demo设置显示，最好可以结合css调整样式，建议用visibility:visible/hidden，这样减少reflow时间
-* 
+ 
 
 ##### 欢迎大家使用，后续会增加验证信息
