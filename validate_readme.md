@@ -1,4 +1,4 @@
-# js/validate.js是封装好的验证
+# js/validate.js是封装好的验证 目前推出版本1.1 请参阅  [validate version1.1](https://github.com/pinglikethinking/jsComponents_works/blob/master/validate_version1.1.md)
 **目前支持的验证类型：**
 * 数字类型(number)：包括验证是否为数字，数值的范围是否符合设定的范围包括不能超过(max_length)和不能小于(min_length)
 * 汉字类型(CHZ)：验证输入是否是汉字

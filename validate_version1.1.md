@@ -1,4 +1,4 @@
-# 更新validate version1.1
+# 更新validate version1.1 [源码](https://github.com/pinglikethinking/jsComponents_works/blob/master/js/validate_version1.1.js)
 ##### 为了方便使用，现更新版本，主要变更如下
 * JS代码不用自己设置太多，是需要new validate('formid')
 * 错误信息提示一律显示在验证框下面，以红色字体标出
