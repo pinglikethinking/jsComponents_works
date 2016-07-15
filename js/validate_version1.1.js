@@ -8,7 +8,7 @@
 			number:"请输入数字",
 			email:"无效email",
 			username:"用户名只允许汉字、英文字母、数字及下划线",
-			pwd:"密码必须由字母和数字组成，至少6位"
+			password:"密码只能输入6-20个字母、数字、下划线"
 		},
 		callback:function(errors){
 			alert(errors);
@@ -16,7 +16,7 @@
 	};
 	var CHS_rule=/^[\u0391-\uFFE5]+$/,//汉字
 		name_rule=/^[\u0391-\uFFE5\w]+$/,//登录名只允许汉字、英文字母、数字及下划线
-		pwd_rule=/^(([A-Z]*|[a-z]*|\d*|[-_\~!@#\$%\^&\*\.\(\)\[\]\{\}<>\?\\\/\'\"]*)|.{0,5})$|\s/,//由字母和数字组成，至少6位
+		pwd_rule=/^(\w){6,20}$/,//6-20个字母、数字、下划线 
 		email_rule=/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
 		number_rule=/^\d+$/;
 	function validate(id,typeInfo,callback){
@@ -27,27 +27,34 @@
 				case 'required':{
 					if(_value==null||_value==undefined||_value==''){
 						callbackfn(defaults.msgs['required']);
+						return false;
 					}
 				};
 				break;
 				case 'min_length':{
 					if(!number_rule.test(_value)){
 						callbackfn(defaults.msgs['number']);
-					}else if(_value<typeInfo.val){
+						return false;
+					}else if(Number(_value)<typeInfo.value){
 						callbackfn(defaults.msgs['min_length']);
+						return false;
 					}
 				};
 				break;
 				case 'max_length':{
 					if(!number_rule.test(_value)){
 						callbackfn(defaults.msgs['number']);
-					}else if(_value>typeInfo.val){
+						return false;
+					}else if(Number(_value)>typeInfo.value){
 						callbackfn(defaults.msgs['max_length']);
+						return false;
 					}
 				};
+				break;
 				case 'CHS':{
 					if(!CHS_rule.test(_value)){
 						callbackfn(defaults.msgs['CHS']);
+						return false;
 					}
 				}
 				break;
@@ -61,18 +68,21 @@
 				case 'email':{
 					if(!email_rule.test(_value)){
 						callbackfn(defaults.msgs['email']);
+						return false;
 					}
 				};
 				break;
 				case 'username':{
 					if(!name_rule.test(_value)){
 						callbackfn(defaults.msgs['username']);
+						return false;
 					}
 				};
 				break;
 				case 'password':{
 					if(!pwd_rule.test(_value)){
-						callbackfn(defaults.msgs['pwd']);
+						callbackfn(defaults.msgs['password']);
+						return false;
 					}
 				};
 				break;
@@ -98,7 +108,7 @@
 				***@type_arr:define typeJSON array like [{"":""},{"":""}...]
 				***@defaults_msgs:define the errormessage; it may be yours or defafults.msgs
 				*/
-				let arr=input_arr[i].attributes['validateInfo'].nodeValue.split(','),
+				let arr=input_arr[i].attributes['validateInfo'].nodeValue.split(';'),
 					validate_id=input_arr[i].id,
 					type_arr=[],
 					defaults_msgs=[];
@@ -111,7 +121,7 @@
 				}
 				//error message can be yours/defaults
 				let my_err_msgs=input_arr[i].attributes['error_message'].nodeValue.split(','),
-					err_msgs=my_err_msgs||defaults_msgs;
+					err_msgs=my_err_msgs!=""?my_err_msgs:defaults_msgs;
 				//bind onblurEvent for every input in this 'demo' form
 				input_arr[i].addEventListener('blur',function(){
 					for(let n=0;n<type_arr.length;n++){
