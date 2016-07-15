@@ -16,6 +16,11 @@
 		<input type="text" name="number" id="demoo" onblur="validateMin()">
 		<label id="erroInfo1"></label>
 	</h2>
+	<hr>
+	<h2>
+		第二种方式，自定义属性
+		<input type="text" name="" id="info" validate="true">
+	</h2>
 	<script type="text/javascript" src="../js/validate.js"></script>
 	<script type="text/javascript">
 	function _callback(erroField,erroinfo){
@@ -30,13 +35,22 @@
 		});
 	}
 	function validateNumber(){
-		var validator=new validate('demo',{type:'number'},function(){return _callback("erroInfo",'请输入数字...姐！');});
+		var validator=new validate('demo',[{type:'number'}],function(){return _callback('erroInfo','请输入数字...姐！');});//验证信息自己设定
 		notvisible('demo','erroInfo');
 	}
 	function validateMin(){
-		var isnumber=new validate('demoo',{type:'number'});
-		var validator=new validate('demoo',{type:'min_length',val:10});
+		var isnumber=new validate('demoo',[{type:'number'},{type:'min_length',val:10}]);//其实不用验证是否为数字了，验证大小的时候会验证是否为数字，这里只是举个例子可以组合验证
 	}
+	//自定义属性
+	function demo(){
+		var info=document.getElementById('info');
+		if(info.attributes["validate"].nodeValue){
+			info.addEventListener('blur',function(){
+				var isnum=new validate('info',[{type:'number'}]);
+			});
+		}
+	}
+	demo();
 	</script>
 </body>
 </html>

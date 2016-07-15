@@ -20,58 +20,65 @@
 		email_rule=/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
 		number_rule=/^\d+$/;
 	var validate=function(id,type,callback){
-		let element=document.getElementById(id),
+		var element=document.getElementById(id),
 			_value=element.value,
 			callbackfn = callback || defaults.callback;
-		switch(type.type){
-			case 'required':{
-				if(_value==null||_value==undefined||_value==''){
-					callbackfn(defaults.msgs['required']);
+		console.log(typeof _value);
+		for(let i=0;i<type.length;i++){
+			switch(type[i].type){
+				case 'required':{
+					if(_value==null||_value==undefined||_value==''){
+						callbackfn(defaults.msgs['required']);
+					}
+				};
+				break;
+				case 'min_length':{
+					if(!number_rule.test(_value)){
+						callbackfn(defaults.msgs['invalid_number']);
+					}else if(_value<type[i].val){
+						callbackfn(defaults.msgs['min_length']);
+					}
+				};
+				break;
+				case 'max_length':{
+					if(!number_rule.test(_value)){
+						callbackfn(defaults.msgs['invalid_number']);
+					}else if(_value>type[i].val){
+						callbackfn(defaults.msgs['max_length']);
+					}
+				};
+				case 'CHS':{
+					if(!CHS_rule.test(_value)){
+						callbackfn(defaults.msgs['invalid_CHS']);
+					}
 				}
+				break;
+				case 'number':{
+					if(!number_rule.test(_value)){
+						callbackfn(defaults.msgs['invalid_number']);
+					}
+				};
+				break;
+				case 'email':{
+					if(!email_rule.test(_value)){
+						callbackfn(defaults.msgs['invalid_email']);
+					}
+				};
+				break;
+				case 'username':{
+					if(!name_rule.test(_value)){
+						callbackfn(defaults.msgs['invalid_username']);
+					}
+				};
+				break;
+				case 'password':{
+					if(!pwd_rule.test(_value)){
+						callbackfn(defaults.msgs['invalid_pwd']);
+					}
+				};
+				break;
 			};
-			break;
-			case 'min_length':{
-				if(_value<type.val){
-					callbackfn(defaults.msgs['min_length']);
-				}
-			};
-			break;
-			case 'max_length':{
-				if(_value>type.val){
-					callbackfn(defaults.msgs['max_length']);
-				}
-			};
-			case 'CHS':{
-				if(!CHS_rule.test(_value)){
-					callbackfn(defaults.msgs['invalid_CHS']);
-				}
-			}
-			break;
-			case 'number':{
-				if(!number_rule.test(_value)){
-					callbackfn(defaults.msgs['invalid_number']);
-				}
-			};
-			break;
-			case 'email':{
-				if(!email_rule.test(_value)){
-					callbackfn(defaults.msgs['invalid_email']);
-				}
-			};
-			break;
-			case 'username':{
-				if(!name_rule.test(_value)){
-					callbackfn(defaults.msgs['invalid_username']);
-				}
-			};
-			break;
-			case 'password':{
-				if(!pwd_rule.test(_value)){
-					callbackfn(defaults.msgs['invalid_pwd']);
-				}
-			};
-			break;
-		};
+		}
 	};
 	window.validate=validate;
 })(window,document);
