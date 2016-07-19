@@ -1,3 +1,8 @@
+/*
+created date:2016/07/15
+by Ipo
+yaping xie
+*/
 (function(window,document){
 	var defaults={
 		msgs:{

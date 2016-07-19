@@ -6,8 +6,8 @@
 * html页面需要给form添加ID，给INPUT添加一些属性，INPUT下面添加标签label。详情如下：
 
 ```html
-    <h2>version2 validate</h2>
-    <h5>随意组合，目前总共分为以下几个规则</h5>
+    <h1>version2 validate</h1>
+    <h2>随意组合，目前总共分为以下几个规则</h2>
     <form id="demo">
         用户名：<input type="text" name="" id="username" validate="true" validateInfo='{"type":"username"}' error_message="">
         <label></label>
