@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>validate version1.2</title>
+</head>
+<body>
+	<form id="demo">
+		不能为空：<input type="text" name="" id="requ" validate="true" validateInfo='{"type":"required"}' error_message="" isRequired="true">
+		<label></label>
+		<br><br>
+	</form>
+	<input type="button" name="" value="submit" id="btn_id">
+	<script type="text/javascript" src="../js/validate_version1.2.js"></script>
+	<script type="text/javascript">
+		var validation=new inputValidate("demo");
+		validation.btnValidateRequired("btn_id");
+	</script>
+</body>
+</html>
