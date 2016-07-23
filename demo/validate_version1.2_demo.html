@@ -15,8 +15,17 @@
 	<input type="button" name="" value="submit" id="btn_id">
 	<script type="text/javascript" src="../js/validate_version1.2.js"></script>
 	<script type="text/javascript">
+	(function test(){
 		var validation=new inputValidate("demo");
-		validation.btnValidateRequired("btn_id");
+		var btn=document.getElementById("btn_id");
+		btn.onclick=function(){
+			var result=validation.hasNull();
+            if(!result){
+                //执行提交数据到后台或者与后台的其他数据交换
+                console.log(validation.hasNull());
+            }
+		};
+	})();
 	</script>
 </body>
 </html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>version2.0</title>
+</head>
+<body>
+	<h1>validate version2.0</h1>
+	也许你用了require.js那么定义函数可能这样的
+	<div>
+		define(['jquery','js/app/validate'],
+	    	function ($,Validate) {
+	        	console.log('login');
+	        	var validation=new inputValidate("demo");//这里面就有闭包
+	    	}
+		);
+	</div>
+	<hr>
+	<form id="demo">
+		不能为空：<input type="text" name="" id="requ" validate="true" validateInfo='{"type":"required"}' error_message="" isRequired="true">
+		<label></label>
+		<br><br>
+	</form>
+	<input type="button" name="" value="submit" id="btn_id">
+	<script type="text/javascript" src="../js/validate_version2.0.js"></script>
+	<script type="text/javascript">
+		function test(){
+			var validation=new inputValidate("demo");
+			var btn=document.getElementById("btn_id");
+			btn.onclick=function(){
+				var result=validation.hasNull();
+            	if(!result){
+                	//执行提交数据到后台或者与后台的其他数据交换
+                	console.log(validation.hasNull());
+            	}
+			};
+		}
+		test();
+	</script>
+</body>
+</html>

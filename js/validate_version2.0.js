@@ -1,7 +1,6 @@
 /*
 created by Ipo
-2016/07/19/version1.2
-add button validate finally
+2016/07/23
  */
 (function (window, document) {
     var defaults = {
@@ -12,6 +11,7 @@ add button validate finally
             CHS: "请输入汉字",
             number: "请输入数字",
             email: "无效email",
+            phone:"无效手机号",
             username: "用户名只允许汉字、英文字母、数字及下划线",
             password: "密码只能输入6-20个字母、数字、下划线"
         },
@@ -78,6 +78,13 @@ add button validate finally
                 }
             };
                 break;
+            case 'phone':{
+                if(_value.length!==11){
+                    callbackfn(defaults.msgs['phone']);
+                    return false;
+                }
+            };
+                break;
             case 'username': {
                 if (!name_rule.test(_value)) {
                     callbackfn(defaults.msgs['username']);
@@ -98,7 +105,7 @@ add button validate finally
     //show error filed and when click again will disappear
     function showAndHideErrorField(info_field, info_error) {
         //the style of the error message/how to display
-        let error_field = info_field.nextSibling.nextSibling;
+        var error_field = info_field.nextSibling.nextSibling;
         error_field.innerHTML = info_error;
         error_field.style.color = 'red';
         //this way is better than display or deal with the dom with''
@@ -122,46 +129,50 @@ add button validate finally
 		***get the form id;set the field to validate
 		***get all input in this form to check its validate attribute
 		 */
-        var result = true,
+        var self=this,
+            result = true,
 			_module = document.getElementById(module_id),
 			input_arr = _module.getElementsByTagName('input');
         defaults.input_arr = input_arr;
-        for (let i = 0; i < input_arr.length; i++) {
+        for (var i = 0; i < input_arr.length; i++) {
             //check to validate or not
-            let isvalidate = input_arr[i].getAttribute('validate');
+            var isvalidate = input_arr[i].getAttribute('validate');
             if (isvalidate) {
                 /*get the validation type;it is a string like{"":""},{"":""}...
 				***@validate_id:get the inputid to validate
 				***@type_arr:define typeJSON array like [{"":""},{"":""}...]
 				***@defaults_msgs:define the errormessage; it may be yours or defafults.msgs
 				*/
-                let arr = input_arr[i].getAttribute('validateInfo').split(';'),
+                var arr = input_arr[i].getAttribute('validateInfo').split(';'),
 					validate_id = input_arr[i].id,
 					type_arr = [],
 					defaults_msgs = [];
                 //string to json
-                for (let j = 0; j < arr.length; j++) {
-                    let elem = JSON.parse(arr[j]);
+                for (var j = 0; j < arr.length; j++) {
+                    var elem = JSON.parse(arr[j]);
                     type_arr.push(elem);
                     elem2 = elem.type;
                     defaults_msgs.push(defaults.msgs[elem2]);
                 }
                 //error message can be yours/defaults
-                let my_err_msgs = input_arr[i].getAttribute('error_message').split(','),
+                var my_err_msgs = input_arr[i].getAttribute('error_message').split(','),
 					err_msgs = my_err_msgs != "" ? my_err_msgs : defaults_msgs;
                 //bind onblurEvent for every input in this 'demo' form
-                input_arr[i].addEventListener('blur', function () {
-                    for (let n = 0; n < type_arr.length; n++) {
-                        result = validate(validate_id, type_arr[n], function () {
-                            //show error filed and when click again will disappear
-                            return showAndHideErrorField(input_arr[i], err_msgs[n]);
-                        });
-                        //decide to check the next step or not;the result is the validate's return
-                        if (!result) {
-                            break;
+                input_arr[i].onblur=(function(input_index,type_arr,err_msgs){
+                    return function () {
+                        for (var n = 0; n < type_arr.length; n++) {
+                            result = validate(validate_id, type_arr[n], function () {
+                                //show error filed and when click again will disappear
+                                return showAndHideErrorField(input_arr[input_index], err_msgs[n]);
+                            });
+                            //decide to check the next step or not;the result is the validate's return
+                            if (!result) {
+                                break;
+                            }
                         }
-                    }
-                });
+                    };
+                })(i,type_arr,err_msgs);//this is a closed scope will be caused by your function maybe!so do this
+                input_arr[i]=null;//destroy element avoid the memory leak
             }
         }
     };
@@ -169,8 +180,8 @@ add button validate finally
     inputValidate.prototype.hasNull = function () {
         var inputs = defaults.input_arr,
             flag=false;
-        for (let i = 0; i < inputs.length; i++) {
-            let isRequired = inputs[i].getAttribute('isRequired'),
+        for (var i = 0; i < inputs.length; i++) {
+            var isRequired = inputs[i].getAttribute('isRequired'),
                 input_value = inputs[i].value;
             if (isRequired && isNull(input_value)) {
                 //show error filed and when click again will disappear
