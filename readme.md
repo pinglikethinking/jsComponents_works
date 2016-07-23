@@ -3,3 +3,4 @@
 * 前端实时验证信息，见文档[validate_readme.md](https://github.com/pinglikethinking/jsComponents_works/blob/master/validate_readme.md)此为第一版本
 * validate更新了一版本见文档[validate_version1.1.md](https://github.com/pinglikethinking/jsComponents_works/blob/master/validate_version1.1.md)
 * validate更新了一版本见文档[validate_version1.2.md](https://github.com/pinglikethinking/jsComponents_works/blob/master/validate_version1.2.md)
+* validate更新了一版本见文档[validate_version2.0.md](https://github.com/pinglikethinking/jsComponents_works/blob/master/validate_version2.0.md)
