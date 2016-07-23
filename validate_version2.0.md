@@ -1,4 +1,4 @@
-# validate_version2.0 [源码]()
+# validate_version2.0 [源码](https://github.com/pinglikethinking/jsComponents_works/blob/master/js/validate_version2.0.js)
 
 ##### 内部解决了下可能存在的闭包问题，当外部使用的时候，如下：
 
